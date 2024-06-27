@@ -7,6 +7,14 @@ const PORT = 8000;
 
 app.use(express.urlencoded({ extended: false })) // this middileware is use for: post req data -> objet
 
+app.use((req, res, next) => {   
+    fs.appendFile(
+        "Log.txt", 
+        `\n${Date.now().toString()} : ${req.method} : ${req.path}`, (err, data) => {
+        next()
+    })
+})
+
 //Routes :
 app.get('/users', (req, res) => {
     const html = `
