@@ -28,6 +28,8 @@ app.get('/users', (req, res) => {
 // REST API
 
 app.get('/api/users', (req, res) => {
+    console.log(req.headers)     // Read the Req. headers
+    res.setHeader("X-Data_contain", "Basic_rest_api")  // Coustom Headers , Always use "X-" for coustom header , for better practics
     return res.json(users)
 })
 
