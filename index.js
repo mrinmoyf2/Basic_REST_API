@@ -1,9 +1,47 @@
 const express = require("express")
 const fs = require("fs")
+const mongoose = require("mongoose")
 const users = require("./MOCK_DATA.json")
 
 const app = express();
 const PORT = 8000;
+
+// Mongodb connection
+mongoose.connect("mongodb://127.0.0.1:27017/basic_rest_api")
+.then(() => 
+    console.log("MongoDB Connected")
+)
+.catch((err) => console.log("Mongo Error", err))
+
+// Mongoose Schema
+const userSchema = new mongoose.Schema({
+    firstName: {
+        type: String,
+        required: true,
+    },
+    lastName: {
+        type: String,
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    phoneNumber: {
+        type: Number,
+    },
+    jobTitle: {
+        type: String,
+    },
+    gender: {
+        type:String,
+    }, 
+})
+
+// create a model basen on that Schema
+const User = mongoose.model("users", userSchema)
+
+// Middlewares :
 
 app.use(express.urlencoded({ extended: false })) // this middileware is use for: post req data -> objet
 
