@@ -1,6 +1,7 @@
 const express = require("express")
 const fs = require("fs")
 const mongoose = require("mongoose")
+
 const users = require("./MOCK_DATA.json")
 
 const app = express();
@@ -36,7 +37,9 @@ const userSchema = new mongoose.Schema({
     gender: {
         type:String,
     }, 
-})
+},
+    { timestamps: true }
+)
 
 // create a model basen on that Schema
 const User = mongoose.model("users", userSchema)
@@ -83,24 +86,28 @@ app.route('/api/users/:id').get((req, res) => {
      return res.json({ status: "pending..." })
 })
 
-app.post('/api/users', (req , res) => {
-    // TODO : Create new user
+app.post('/api/users',async (req , res) => {
     const body = req.body
     if(
         !body ||
-        !body.firstName ||
-        !body.lastName ||
+        !body.first_name ||
+        !body.last_name ||
         !body.email ||
-        !body.phoneNumber ||
+        !body.ph_no ||
         !body.gender ||
-        !body.jobTitle
+        !body.job_title
     ){
         return res.status(400).json({msg: "All fields are required..."})
     }
-    users.push({...body, id: users.length + 1 })
-    fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err, data) => {
-        return res.json({ status : "success...", id : users.length })
-    })
+    const result = await User.create({
+        firstName: body.first_name,
+        lastName: body.last_name,
+        email: body.email,
+        phoneNo: body.ph_no,
+        gender: body.gender,
+        jobTitle: body.job_title,
+    }) 
+    return res.status(201).json({msg: 'success'})
 })
 
 
