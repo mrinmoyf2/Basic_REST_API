@@ -86,6 +86,17 @@ app.route('/api/users/:id').get((req, res) => {
 app.post('/api/users', (req , res) => {
     // TODO : Create new user
     const body = req.body
+    if(
+        !body ||
+        !body.firstName ||
+        !body.lastName ||
+        !body.email ||
+        !body.phoneNumber ||
+        !body.gender ||
+        !body.jobTitle
+    ){
+        return res.status(400).json({msg: "All fields are required..."})
+    }
     users.push({...body, id: users.length + 1 })
     fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err, data) => {
         return res.json({ status : "success...", id : users.length })
