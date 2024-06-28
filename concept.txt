@@ -1,0 +1,1 @@
+index.js -> mongoDB connction (connction) -> Create model Based on User Schema (models) -> we get User -> middlewares -> routes <- controllers

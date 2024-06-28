@@ -1,0 +1,14 @@
+Refactor the Backend:
+1. Implement MVP(Model-View-Controller)
+        |
+            (i) models
+            (ii) views
+            (iii) controllers
+            (iv) routes
+
+
+FrontEnd :
+
+1. Implement a form , for post the user data in POST:/api/user
+2. Inpmelent a form , for patch the user data in PATCH:/api/user/:id
+3. Implement the delete buttom , for DELETE:/api/users/:id
