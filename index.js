@@ -2,7 +2,7 @@ const express = require("express")
 const fs = require("fs")
 const mongoose = require("mongoose")
 
-const users = require("./MOCK_DATA.json")
+//const users = require("./MOCK_DATA.json")
 
 const app = express();
 const PORT = 8000;
@@ -57,33 +57,49 @@ app.use((req, res, next) => {
 })
 
 //Routes :
-app.get('/users', (req, res) => {
+app.get('/users',async (req, res) => {
+    const allDbUsers = await User.find({})
     const html = `
-    <ul>
-        ${users.map(user => `<li>${user.first_name}</li>`).join("")}
-    </ul>
-    `
+            <table>
+              <tr style="color: blue;">
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone Number</th>
+              </tr>
+                    ${allDbUsers.map((user) => `
+                        <tr>
+                            <th >${user.firstName}</th>
+                            <th>${user.email}</th>
+                            <th>${user.phoneNumber}</th>
+                        <tr>
+                        `).join("")}
+            </table>
+                `
     res.send(html)
 })
 
 // REST API
 
-app.get('/api/users', (req, res) => {
-    console.log(req.headers)     // Read the Req. headers
+app.get('/api/users',async (req, res) => {
+    const allDbUsers = await User.find({})   // Read the Req. headers
     res.setHeader("X-Data_contain", "Basic_rest_api")  // Coustom Headers , Always use "X-" for coustom header , for better practics
-    return res.json(users)
+    return res.json(allDbUsers)
 })
 
-app.route('/api/users/:id').get((req, res) => {
-    const id = Number(req.params.id)
-    const user = users.find((user) => user.id === id)
+app.route('/api/users/:id')
+.get(async (req, res) => {
+    // const id = Number(req.params.id)
+    // const user = users.find((user) => user.id === id)
+    const user = await User.findById(req.params.id);
+    if(!user) return res.status(404).json({ error: "User not found" })
     return res.json(user)
-}).patch((req, res) => {
+}).patch(async (req, res) => {
+    await User.findByIdAndUpdate(req.params.id, { lastName: "barma" }) // The changed is fetched from request.
     // TODO : Create new user
-    return res.json({ status : "pending.." })
-}).delete((req, res) => {
-     // TODO : delete the user with id
-     return res.json({ status: "pending..." })
+    return res.json({ status : "Successfull patch.." })
+}).delete(async (req, res) => {
+    await User.findByIdAndDelete(req.params.id)
+     return res.json({ status: "Successfull Deletation..." })
 })
 
 app.post('/api/users',async (req , res) => {
@@ -103,7 +119,7 @@ app.post('/api/users',async (req , res) => {
         firstName: body.first_name,
         lastName: body.last_name,
         email: body.email,
-        phoneNo: body.ph_no,
+        phoneNumber: body.ph_no,
         gender: body.gender,
         jobTitle: body.job_title,
     }) 
